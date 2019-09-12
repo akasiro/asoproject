@@ -1,0 +1,205 @@
+数据来源与字段说明
+Table: baseinfo
+1. 数据标签：原始数据
+2. 数据来源：
+数据来源于鸟哥aso网站（aso.niaogebiji.com）网站包含从applestore获得的ios系统的数据。
+数据通过爬虫爬取。
+2.1 爬虫代码地址：
+爬取代码分为两部分
+第一部分爬取id来自于七麦数据中2017年每月排名前1000的app
+https://github.com/akasiro/asoscrape20190704.git
+第二部分爬取根据talkindata给的数据中的包名得到的但不含在第一部分数据中的id
+https://github.com/akasiro/asoscrape20190716.git
+爬取数据之后将数据合并到数据库中的代码为
+https://github.com/akasiro/mergedata-tosqlite.git
+3. 数据描述
+3.1. 数据简介：
+数据来源于鸟哥aso网站（aso.niaogebiji.com）网站包含从applestore获得的ios系统的数据。
+数据通过爬虫爬取。
+3.2. 样本数量：
+13088个appleid * 24个变量
+3.3. 变量描述：
+appleid（主键）  : 游戏在applestore中的appid
+appName  : 游戏名称
+appType  : app类型（在样本中的数据均为游戏）
+price  : 软件下载的价格
+latestVersion  : 爬取数据时的最新版本更新时间
+developerFirm  : 开发商
+developer  : 开发者
+tags  : 在applestore的分类
+releaseDate  : 发布日期
+lastestDate  : 更新日期
+bundleId  : ios系统中的包名
+lastestVer  : 在爬取数据时的最新版本号
+size  : app安装包大小，单位是mb
+payInApp  : 是否有内购
+support  : 支持网站，在数据中并没有爬取到这部分
+compatibility  : 对于操作系统的兼容性
+lang  : 语言
+contentRank  : 内容评级
+artistname  : 作者（或者公司）名称
+samepubappnum  : 同开发者有几个医用
+samepubapplist  : 同开发这应用的名称列表，使用“|”分隔
+samepubapplistid  : 同开发者应用的id列表，使用“|”分隔
+introcontent  : 应用描述
+rdtimestamp  :  将发布日期转化为时间戳，定义为从格林威治时间1970年01月01日00时00分00秒(北京时间1970年01月01日08时00分00秒)起至现在的总秒数
+==========
+Table: version
+1. 数据标签：原始数据
+2. 数据来源：同baseinfo
+2.1 代码地址：同baseinfo
+3. 数据描述
+3.1. 数据简介:
+同baseinfo。
+这部分数据是截止到爬取时间为止，app的版本记录
+3.2. 样本数量：
+106114条记录*7个变量【12611个appleid】
+3.3. 变量描述：
+appleid  : 游戏在applestore中的appid
+verDate  : 本条记录所记录的app版本发布时间
+timestamp  : 将verDate转化为时间戳
+versionTitle  : 版本号（注意这个是原始的版本号，但是这个版本号使用点分隔数字的在excel中会显示错误）
+versionTitle2  : 版本号，为了避免的excel中版本号显示错误在版本号的最开始加入v将其强制转化为字符串）
+filename（主键）  : 在原数据中用来存储文本信息的文件名，由appleid+v+版本号（将"."转化为"_"）进行存储，在数据库中作为这张数据表的主键
+vercontent  : 本条更新的更新记录文本
+==========
+Table: pkgname_appleid
+1. 数据标签：原始数据（手动整理）
+2. 数据来源：
+手动整理的数据
+首先先从talkingdata SDL平台上复制出游戏的包名，然后再七麦数据上逐条搜索包名对应的appleid（注：这个版本的包名由于是使用手动复制存在两个问题，第一，有些长包名复制不全；第二，包名列表并不完整）
+2.1 代码地址：无
+3. 数据描述
+3.1. 数据简介:
+这个表格主要用来将爬取的数据与talkingdata SDL的数据匹配
+SDL上的数据只包含应用的安卓安装包名，因此通过能够搜索包名的七麦数据来逐条搜索匹配数据
+
+3.2. 样本数量：
+8031条数据*5个变量
+其中：
+包名个数：8031
+搜索到的对应appleid个数：1729
+3.3. 变量描述：
+type_code  : 来自于talkingdata对于app的分类代码（对于每一个包名只有唯一一种分类），
+talkingdata的分类标准为：
+基本是根据应用商店的标准来划分，如果在不同应用商店有不同的划分会按照应用商店的可信度赋予不同的权重，然后按照权重最高最为type，比如苹果商店、华为商店和小米商店的权重会比较高
+但是具体的权重如何分配TD认为是机密没法提供
+pkgName （主键） :来自于talkingdata所提供的数据中的每一个app的安卓包名 
+type  : 来自于talkingdata对于app的分类
+qimaiId  : 通过逐条搜索从七麦数据获取的该包名对应的在七麦数据库中的id
+appleid  : 通过逐条搜索从七麦数据获取的该包名对应的appleid
+==========
+Table: game_demand_perf_td_20190820
+1. 数据标签：原始数据
+2. 数据来源：在talkingdata SDL平台上聚合形成的数据，数据为平台导出数据
+原数据为：demand_game_level20190801.csv，perf20190801.csv
+2.1 代码地址：
+聚合数据所用代码 https://github.com/akasiro/tdsmartplatform.git
+3. 数据描述
+3.1. 数据简介:
+将talkingdata SDL平台上的2017年的数据通过代码整理为以月为数据颗粒度，以每个包名为研究单元，每月每个包名的绩效和需求特征的数据
+3.2. 样本数量：
+85185条记录*24个变量
+8590个包名*12个月
+3.3. 变量描述：
+datahash （主键） : 数据的sha256哈希值（注入数据库时防止重复注入的校验值）
+* 计算方式：
+使用hashlib包中的sha256对将之后所有变量作为tuple再字符串化的数据进行哈希加密
+** 原数据tuple中各变量排列方式：
+['active_num', 'cover_num', 'coverage', 'date', 'mau', 'type_code', 'user_num', 'type', 'appHash', 'id', 'g_app_m', 'g_app_v', 'g_apptype_m', 'g_apptype_v', 'g_gtype_m', 'g_gtype_v', 'g_game_m', 'g_game_v', 'g_rgame_m', 'g_rgame_v', 'g_rgtype_m', 'g_rgtype_v', 'pkgName']
+** 加密代码 hash_sha256.update(str(tuple(r)).encode())
+pkgName  : app包名
+appHash （主键） : talkingData对app加密的哈希值
+id  : 为了导出数据使用base64包对包名进行加密得到的结果，加密方式为base64.b64encode(pkgName)，解密方式为base64.b64decode(x).decode('gbk')
+type  : TalkingData提供的app分类
+type_code  : TalkingData提供的app分类代码
+date  : 日期（均为2017年每个月的最后一天）
+user_num  : 当月talkingdata统计的用户数
+active_num  : 该包名对应的活跃人数
+cover_num  : 该包名对应的安装人数
+mau  : 月活跃率（活跃人数/统计用户数）
+coverage  : 月覆盖率（安装人数/统计用户数）
+g_app_m: 安装该游戏的app用户群中安装app个数的均值
+g_app_v: 安装该游戏的app用户群中安装app个数的方差
+g_apptype_m: 安装该游戏的app用户群中安装app种类的均值
+g_apptype_v: 安装该游戏的app用户群中安装app种类的方差
+g_gype_m: 安装该游戏的app用户群中安装游戏种类的均值
+g_gtype_v: 安装该游戏的app用户群中安装游戏种类的方差
+g_game_m: 安装该游戏的app用户群中安装游戏个数的均值
+g_game_v: 安装该游戏的app用户群中安装游戏个数的方差
+g_rgame_m: 安装该游戏的app用户群中安装游戏个数占全部app个数的比例的均值
+g_rgame_v: 安装该游戏的app用户群中安装游戏个数占全部app个数的比例的方差
+g_rgtype_m: 安装该游戏的app用户群中安装游戏类别占全部app类别的比例的均值
+g_rgtype_v:安装该游戏的app用户群中安装游戏类别占全部app类别的比例的方差
+==========
+
+Table: category_demand_td_20190820
+1. 数据标签：原始数据
+2. 数据来源：在talkingdata SDL平台上聚合形成的数据，数据为平台导出数据
+原数据为：demand_category20190725.csv
+2.1 代码地址：聚合数据所用代码 https://github.com/akasiro/tdsmartplatform.git
+3. 数据描述
+3.1. 数据简介:
+将talkingdata SDL平台上的2017年的数据通过代码整理为以月为数据颗粒度，以每个游戏类别为研究单元，每月每个类别的需求特征的数据
+3.2. 样本数量：22种类别*12个月*17个变量
+3.3. 变量描述：
+datahash （主键）  : 数据校验哈希值（同上），加密时原数据变量排列为['type_code',  'app_m',  'app_v',  'apptype_m',  'apptype_v',  'gtype_m',  'gtype_v',  'game_m',  'game_v',  'rgame_m',  'rgame_v',  'rgtype_m',  'rgtype_v',  'type_ratio_m',  'type_ratio_v',  'date'] 
+type_code  : talkingdata对于app的分类代码
+date  : 日期（2017年每月月底最后一天）
+app_m: 安装该类别的app用户群中安装app个数的均值
+app_v: 安装该类别的app用户群中安装app个数的方差
+apptype_m: 安装该类别的app用户群中安装app种类的均值
+apptype_v: 安装该类别的app用户群中安装app种类的方差
+gype_m: 安装该类别的app用户群中安装游戏种类的均值
+gtype_v: 安装该类别的app用户群中安装游戏种类的方差
+game_m: 安装该类别的app用户群中安装游戏个数的均值
+game_v: 安装该类别的app用户群中安装游戏个数的方差
+rgame_m: 安装该类别的app用户群中安装游戏个数占全部app个数的比例的均值
+rgame_v: 安装该类别的app用户群中安装游戏个数占全部app个数的比例的方差
+rgtype_m: 安装该类别的app用户群中安装游戏类别占全部app类别的比例的均值
+rgtype_v: 安装该类别的app用户群中安装游戏类别占全部app类别的比例的方差
+type_ratio_m: 安装了该类别游戏的个数占安装的游戏总数的比例的均值
+type_ratio_v: 安装了该类别游戏的个数占安装的游戏总数的比例的方差
+==========
+
+Table:  demand_category_year20190725_td_20190820
+1. 数据标签：处理数据
+2. 数据来源：利用usernum对category_demand_td_20190820进行聚合到以年为单位，数据从talkingdata SDL平台导出原数据为demand_category_year20190725.csv
+2.1 代码地址：
+3. 数据描述
+3.1. 数据简介: 
+3.2. 样本数量：22个typecode*12个月
+3.3. 变量描述：
+同category_demand_td_20190820
+==========
+Table: category_appleid_fromTDorigin
+1. 数据标签：处理数据
+2. 数据来源：通过对pkgname_appleid和baseinfo表的merge得到的数据表
+2.1 代码地址：
+3. 数据描述
+3.1. 数据简介: 这个数据表得到了appleid对应的talkingdata的类别代码，是用于计算战略差异的输入变量之一
+3.2. 样本数量：1820条数据*3个变量【其中1729个appleid】
+3.3. 变量描述：
+dataid （主键） : 自动生成的主键
+type_code  : talkingdata的类别代码
+type  : talkingdata的类别
+appleid  : 
+==========
+Table:  aso_diff20190724
+1. 数据标签：处理数据
+2. 数据来源：使用gen_simtable计算，计算思路参见github中的readme
+2.1 代码地址：https://github.com/akasiro/asocalsim20190719.git
+3. 数据描述
+3.1. 数据简介:
+3.2. 样本数量：
+3.3. 变量描述：
+datahash （主键） : 数据校验哈希值，加密时原数据变量排序为['appleid', 'diff_p_f', 'date', 'timestamp', 'diff_p_max', 'diff_e_f', 'diff_e_max', 'type_code']
+appleid  : 
+type_code  : 
+date  : 
+timestamp  : 
+diff_p_f  : 战略差异，根据prototype模型，对比方式为目标游戏对比同一类别所有应用文本总和
+diff_p_max  : 战略差异，根据prototype模型，对比方式为目标游戏对比同一类别最为相似的应用
+diff_e_f  : 战略差异，根据exemplar模型，对比方式为目标游戏对比同一类别所有exemplar文本总和
+diff_e_max  : 战略差异，根据exemplar模型，对比方式为目标游戏对比同一类别最为相似的exemplar
+==========
