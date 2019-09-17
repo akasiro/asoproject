@@ -1,11 +1,6 @@
-import os,sqlite3,re,hashlib,time
-import pandas as pd
-import numpy as np
-# 路径
-datapath = os.path.join(r'/home/pi/Documents/data/asoproject/20190723')
-dbpath = os.path.join(datapath,'aso20190723.db')
-conn = sqlite3.connect(dbpath)
-cur  = conn.cursor()
+
+
+from datapath_tool import *
 
 
 # tool func
